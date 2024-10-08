@@ -26,5 +26,5 @@ jetson-containers run $(autotag jax) bash -c "python3 -c 'import jax; print(jax.
 ```bash
 jetson-containers run \
 -v ~/dev/cax:/cax \
-$(autotag jax) bash -c "pip install -r /cax/requirements.ojo.txt && pytest /cax"
+$(autotag jax) bash -c /cax/ojo.test.sh
 ```
