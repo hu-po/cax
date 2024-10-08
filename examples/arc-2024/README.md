@@ -76,7 +76,7 @@ $(autotag jax) \
 bash -c "/cax/examples/arc-2024/test.1d-arc.ojo.sh"
 ```
 
-run arc-2024
+run arc-2024 notebook from inside container
 
 ```bash
 jetson-containers run \
@@ -87,9 +87,19 @@ $(autotag jax) \
 bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
 ```
 
+run arc-2024 script from inside container
+
+```bash
+jetson-containers run \
+-v ~/dev/cax:/cax \
+-e WANDB_API_KEY=$WANDB_API_KEY \
+$(autotag jax) \
+bash -c "python3 /cax/examples/arc-2024/train.py"
+```
+
 ## lambda
 
-
+TODO
 
 ## ideas while reading paper
 
