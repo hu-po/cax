@@ -48,7 +48,7 @@ def main():
     parser.add_argument('--num_train_steps', type=int, default=8192, help='Number of training steps')
     parser.add_argument('--print_interval', type=int, default=128, help='Interval for printing logs')
     parser.add_argument('--wandb_project', type=str, default='arc-2024-nca', help='Weights & Biases project name')
-    parser.add_argument('--wandb_entity', type=str, default='hu-po', help='Weights & Biases entity (username or team)')
+    parser.add_argument('--wandb_entity', type=str, default='hug', help='Weights & Biases entity (username or team)')
     parser.add_argument('--wandb_api_key', type=str, default=None, help='Weights & Biases API key')
     parser.add_argument('--save_model', type=str, default=None, help='Path to save the trained model')
 
