@@ -100,7 +100,18 @@ bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
 run a sweep
 
 ```bash
+jetson-containers run \
+-v ~/dev/cax:/cax \
+-e WANDB_API_KEY=$WANDB_API_KEY \
+$(autotag jax)
 wandb sweep -e hu-po -p arc-2024-nca config.yaml
+```
+```bash
+jetson-containers run \
+-v ~/dev/cax:/cax \
+-e WANDB_API_KEY=$WANDB_API_KEY \
+$(autotag jax) \
+bash -c "/cax/examples/arc-2024/train.arc-2024.sweep.ojo.sh"
 ```
 
 ## lambda
