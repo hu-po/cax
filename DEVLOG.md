@@ -57,7 +57,14 @@ jetson-containers run \
 $(autotag jax) bash -c /cax/docker/test.ojo.sh
 ```
 
-tests working on both!
+run arc 1d test from inside container
+
+```bash
+jetson-containers run \
+-v ~/dev/cax:/cax \
+-p 8888:8888 \
+$(autotag jax) bash -c "/cax/docker/test.arc.ojo.sh"
+```
 
 ## ideas while reading paper
 
