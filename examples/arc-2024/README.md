@@ -1,6 +1,6 @@
 # 08.10.2024
 
-## get dependencies working
+## oop
 
 get it working on ojo and oop
 
@@ -45,7 +45,8 @@ nvcr.io/nvidia/jax:24.04-py3 \
 bash -c /cax/examples/arc-2024/test.1d-arc.oop.sh
 ```
 
-set up local environment on ojo
+## ojo
+
 - https://github.com/dusty-nv/jetson-containers/tree/master/packages/ml/jax
 
 ```bash
@@ -61,7 +62,7 @@ $(autotag jax) \
 bash -c /cax/examples/arc-2024/test.lib.ojo.sh
 ```
 
-run arc 1d test from inside container
+run 1d-arc notebook from inside container
 
 ```bash
 jetson-containers run \
@@ -69,6 +70,17 @@ jetson-containers run \
 -p 8888:8888 \
 $(autotag jax) \
 bash -c "/cax/examples/arc-2024/test.1d-arc.ojo.sh"
+```
+
+run arc-2024
+
+```bash
+jetson-containers run \
+-v ~/dev/cax:/cax \
+-p 8888:8888 \
+-e WANDB_API_KEY:$WANDB_API_KEY \
+$(autotag jax) \
+bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
 ```
 
 ## ideas while reading paper
