@@ -1,0 +1,8 @@
+FROM nvcr.io/nvidia/jax:23.08-py3
+RUN pip install --upgrade pip
+WORKDIR /
+ENV JAX_PLATFORM_NAME=gpu
+ENV XLA_FLAGS=""
+RUN git clone https://github.com/hu-po/cax.git
+RUN pip install -e "/cax[dev]"
+CMD ["pytest", "cax/"]
