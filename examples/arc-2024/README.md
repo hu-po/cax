@@ -32,7 +32,7 @@ library tests in container on oop
 docker run --gpus all -it --rm \
 -v ~/dev/cax:/cax \
 nvcr.io/nvidia/jax:24.04-py3 \
-bash -c /cax/docker/test.oop.sh
+bash -c /cax/examples/arc-2024/test.lib.oop.sh
 ```
 
 run arc 1d test for oop
@@ -42,7 +42,7 @@ docker run --gpus all -it --rm \
 -v ~/dev/cax:/cax \
 -p 8888:8888 \
 nvcr.io/nvidia/jax:24.04-py3 \
-bash -c /cax/docker/test.arc.oop.sh
+bash -c /cax/examples/arc-2024/test.1d-arc.oop.sh
 ```
 
 set up local environment on ojo
@@ -57,7 +57,8 @@ bash -c "python3 -c 'import jax; print(jax.devices())'"
 ```bash
 jetson-containers run \
 -v ~/dev/cax:/cax \
-$(autotag jax) bash -c /cax/docker/test.ojo.sh
+$(autotag jax) \
+bash -c /cax/examples/arc-2024/test.lib.ojo.sh
 ```
 
 run arc 1d test from inside container
@@ -66,7 +67,8 @@ run arc 1d test from inside container
 jetson-containers run \
 -v ~/dev/cax:/cax \
 -p 8888:8888 \
-$(autotag jax) bash -c "/cax/docker/test.arc.ojo.sh"
+$(autotag jax) \
+bash -c "/cax/examples/arc-2024/test.1d-arc.ojo.sh"
 ```
 
 ## ideas while reading paper
