@@ -78,7 +78,7 @@ run arc-2024
 jetson-containers run \
 -v ~/dev/cax:/cax \
 -p 8888:8888 \
--e WANDB_API_KEY:$WANDB_API_KEY \
+-e WANDB_API_KEY=$WANDB_API_KEY \
 $(autotag jax) \
 bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
 ```
