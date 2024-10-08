@@ -104,7 +104,11 @@ jetson-containers run \
 -v ~/dev/cax:/cax \
 -e WANDB_API_KEY=$WANDB_API_KEY \
 $(autotag jax)
-wandb sweep -e hu-po -p arc-2024-nca config.yaml
+```
+```bash
+pip install wandb
+wandb login
+wandb sweep -e hug -p arc-2024-nca /cax/examples/arc-2024/sweep1.yaml
 ```
 ```bash
 jetson-containers run \
