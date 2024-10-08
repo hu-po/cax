@@ -34,7 +34,6 @@ def process_example(example, task_index, ds_size):
 def main():
     parser = argparse.ArgumentParser(description='ARC 2024 Neural Cellular Automata')
 
-    # Add arguments
     parser.add_argument('--seed', type=int, default=0, help='Random seed')
     parser.add_argument('--channel_size', type=int, default=32, help='Channel size')
     parser.add_argument('--num_spatial_dims', type=int, default=1, help='Number of spatial dimensions')
@@ -48,13 +47,11 @@ def main():
     parser.add_argument('--num_train_steps', type=int, default=8192, help='Number of training steps')
     parser.add_argument('--print_interval', type=int, default=128, help='Interval for printing logs')
     parser.add_argument('--wandb_project', type=str, default='arc-2024-nca', help='Weights & Biases project name')
-    parser.add_argument('--wandb_entity', type=str, default='hug', help='Weights & Biases entity (username or team)')
+    parser.add_argument('--wandb_entity', type=str, default="hug", help='Weights & Biases entity (username or team)')
     parser.add_argument('--wandb_api_key', type=str, default=None, help='Weights & Biases API key')
     parser.add_argument('--save_model', type=str, default=None, help='Path to save the trained model')
 
     args = parser.parse_args()
-
-    # Now use args.seed, args.channel_size, etc. instead of the previous variables.
 
     seed = args.seed
     channel_size = args.channel_size
@@ -72,7 +69,6 @@ def main():
     key = jax.random.PRNGKey(seed)
     rngs = nnx.Rngs(seed)
 
-    # Wandb login
     if args.wandb_api_key:
         os.environ['WANDB_API_KEY'] = args.wandb_api_key
 
@@ -95,7 +91,6 @@ def main():
         }
     )
 
-    # Install 1D-ARC dataset
     ds_path = "./1D-ARC/dataset"
     if not os.path.exists(ds_path):
         print('Cloning 1D-ARC dataset...')
@@ -103,7 +98,6 @@ def main():
     else:
         print('1D-ARC dataset already exists.')
 
-    # Prepare dataset
     train_examples = []
     test_examples = []
     task_index_to_name = {}
@@ -123,32 +117,20 @@ def main():
 
     task_list = list(task_index_to_name.values())
 
-    # Initialize state functions
     def init_state(key):
-        # Sample dataset
         sample = jax.random.choice(key, train_tasks)
-
-        # Sample input and target
         task_index, input, target = jnp.split(sample, indices_or_sections=[1, ds_size + 1])
-
-        # Initialize state
         state = jnp.zeros((ds_size, channel_size))
         state = state.at[..., :1].set(input)
         return state, target, task_index
 
     def init_state_test(key):
-        # Sample dataset
         sample = jax.random.choice(key, test_tasks)
-
-        # Sample input and target
         task_index, input, target = jnp.split(sample, indices_or_sections=[1, ds_size + 1])
-
-        # Initialize state
         state = jnp.zeros((ds_size, channel_size))
         state = state.at[..., :1].set(input)
         return state, target, task_index
 
-    # Model
     perceive = DepthwiseConvPerceive(channel_size, rngs, num_kernels=num_kernels, kernel_size=(3,))
     update = ResidualUpdate(
         num_spatial_dims,
@@ -167,7 +149,6 @@ def main():
 
         def __init__(self, perceive, update, embed_input, embed_task):
             super().__init__(perceive, update)
-
             self.embed_input = embed_input
             self.embed_task = embed_task
 
@@ -178,9 +159,7 @@ def main():
     params = nnx.state(ca, nnx.Param)
     print("Number of params:", jax.tree_util.tree_reduce(lambda x, y: x + y.size, params, 0))
 
-    # Training
     lr_sched = optax.linear_schedule(init_value=learning_rate, end_value=0.1 * learning_rate, transition_steps=2_000)
-
     optimizer = optax.chain(
         optax.clip_by_global_norm(1.0),
         optax.adam(learning_rate=lr_sched),
@@ -189,20 +168,24 @@ def main():
     update_params = nnx.All(nnx.Param, nnx.PathContains("update"))
     optimizer = nnx.Optimizer(ca, optimizer, wrt=update_params)
 
-    # Loss function
     def mse(state, target):
         return jnp.mean(jnp.square(state[..., :3] - target))
 
     @nnx.jit
+    def accuracy_fn(state, target):
+        predictions = jnp.argmax(state[..., :3], axis=-1)
+        target_labels = jnp.argmax(target, axis=-1)
+        correct = jnp.sum(predictions == target_labels)
+        total = target_labels.size
+        return correct / total
+
+    @nnx.jit
     def loss_fn(ca, state, target, task_index):
-        # Embed
         input = state[..., 0]
         input_embed = ca.embed_input(jnp.asarray(input, dtype=jnp.int32))
         task_embed = ca.embed_task(jnp.asarray(task_index, dtype=jnp.int32))
         state = state.at[..., :3].set(input_embed)
-
         target_embed = ca.embed_input(jnp.asarray(target[..., 0], dtype=jnp.int32))
-
         state_axes = nnx.StateAxes({nnx.RngState: 0, ...: None})
         state = nnx.split_rngs(splits=batch_size)(
             nnx.vmap(
@@ -210,7 +193,6 @@ def main():
                 in_axes=(state_axes, 0, 0),
             )
         )(ca, state, task_embed)
-
         loss = mse(state, target_embed)
         return loss
 
@@ -218,7 +200,6 @@ def main():
     def train_step(ca, optimizer, key):
         keys = jax.random.split(key, batch_size)
         state, target, task_index = jax.vmap(init_state)(keys)
-
         loss, grad = nnx.value_and_grad(loss_fn, argnums=nnx.DiffState(0, update_params))(ca, state, target, task_index)
         optimizer.update(grad)
         return loss
@@ -227,14 +208,12 @@ def main():
     def eval_step(ca, key):
         keys = jax.random.split(key, batch_size)
         state, target, task_index = jax.vmap(init_state_test)(keys)
+        accuracy = accuracy_fn(state, target)
+        return accuracy
 
-        loss = loss_fn(ca, state, target, task_index)
-        return loss
-
-    # Main training loop
     pbar = tqdm(range(num_train_steps), desc="Training", unit="train_step")
     losses = []
-    eval_losses = []
+    eval_accuracies = []
 
     for i in pbar:
         key, subkey = jax.random.split(key)
@@ -246,23 +225,19 @@ def main():
             pbar.set_postfix({"Average Loss": f"{avg_loss:.6f}"})
             wandb.log({'average_loss': avg_loss, 'step': i})
 
-            # Evaluation step
-            eval_loss = eval_step(ca, subkey)
-            eval_losses.append(eval_loss)
-            avg_eval_loss = sum(eval_losses[-print_interval:]) / len(eval_losses[-print_interval:])
-            wandb.log({'eval_loss': avg_eval_loss, 'step': i})
+            accuracy = eval_step(ca, subkey)
+            eval_accuracies.append(accuracy)
+            avg_accuracy = sum(eval_accuracies[-print_interval:]) / len(eval_accuracies[-print_interval:])
+            wandb.log({'eval_accuracy': avg_accuracy, 'step': i})
 
         wandb.log({'loss': loss, 'step': i})
 
-    # Optionally save the trained model
     if args.save_model:
-        # Save the model parameters
         import pickle
         with open(args.save_model, 'wb') as f:
             pickle.dump(params, f)
         print(f"Model parameters saved to {args.save_model}")
 
-    # Visualization and logging to WandB
     key, subkey = jax.random.split(key)
     keys = jax.random.split(subkey, 8)
     state_init, target, task_index = jax.vmap(init_state_test)(keys)
@@ -284,7 +259,6 @@ def main():
     task_name = [task_list[int(jnp.squeeze(task_index_i))] for task_index_i in task_index]
     state_rgb_np = jax.device_get(state_rgb)
 
-    # Log examples to WandB
     wandb.log({
         "examples": [
             wandb.Image(
