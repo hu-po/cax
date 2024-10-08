@@ -3,4 +3,4 @@ pip install 'pytest>=8.3.2' 'pillow>=10.4.0' 'msgpack>=1.1.0' orbax-checkpoint t
 pip install -e /cax --no-deps
 pip install mediapy tqdm wandb
 ln -s $(which python3) /usr/local/bin/python
-wandb agent hug/arc-2024-nca/wivhp020
+wandb agent hug/arc-2024-nca/0e4jmudo
