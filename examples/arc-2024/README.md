@@ -84,7 +84,7 @@ jetson-containers run \
 -p 8888:8888 \
 -e WANDB_API_KEY=$WANDB_API_KEY \
 $(autotag jax) \
-bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
+bash -c "/cax/examples/arc-2024/train.arc-2024.nb.ojo.sh"
 ```
 
 run arc-2024 script from inside container
@@ -94,7 +94,7 @@ jetson-containers run \
 -v ~/dev/cax:/cax \
 -e WANDB_API_KEY=$WANDB_API_KEY \
 $(autotag jax) \
-bash -c "python3 /cax/examples/arc-2024/train.py"
+bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
 ```
 
 ## lambda
