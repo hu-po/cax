@@ -21,7 +21,9 @@ pytest
 pick a container for oop
 
 ```bash
-docker run --gpus all -it --rm nvcr.io/nvidia/jax:23.08-py3 bash -c "nvidia-smi && python3 -c 'import jax; print(jax.devices())'"
+docker run --gpus all -it --rm \
+nvcr.io/nvidia/jax:24.04-py3 \
+bash -c "nvidia-smi && python3 -c 'import jax; print(jax.devices())'"
 ```
 
 build a local docker container and run tests
@@ -36,7 +38,7 @@ or just run in raw
 ```bash
 docker run --gpus all -it --rm \
 -v ~/dev/cax:/cax \
-nvcr.io/nvidia/jax:23.08-py3 \
+nvcr.io/nvidia/jax:24.04-py3 \
 bash -c /cax/docker/test.oop.sh
 ```
 
@@ -44,7 +46,9 @@ set up local environment on ojo
 - https://github.com/dusty-nv/jetson-containers/tree/master/packages/ml/jax
 
 ```bash
-jetson-containers run $(autotag jax) bash -c "python3 -c 'import jax; print(jax.devices())'"
+jetson-containers run \
+$(autotag jax) \
+bash -c "python3 -c 'import jax; print(jax.devices())'"
 ```
 
 ```bash
