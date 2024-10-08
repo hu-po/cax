@@ -97,6 +97,12 @@ $(autotag jax) \
 bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
 ```
 
+run a sweep
+
+```bash
+wandb sweep -e hu-po -p arc-2024-nca config.yaml
+```
+
 ## lambda
 
 TODO
