@@ -26,20 +26,23 @@ nvcr.io/nvidia/jax:24.04-py3 \
 bash -c "nvidia-smi && python3 -c 'import jax; print(jax.devices())'"
 ```
 
-build a local docker container and run tests
-
-```bash
-docker build -f docker/Dockerfile.gpu -t cax .
-docker run --gpus all -it --rm cax
-```
-
-or just run in raw
+library tests in container on oop
 
 ```bash
 docker run --gpus all -it --rm \
 -v ~/dev/cax:/cax \
 nvcr.io/nvidia/jax:24.04-py3 \
 bash -c /cax/docker/test.oop.sh
+```
+
+run arc 1d test for oop
+
+```bash
+docker run --gpus all -it --rm \
+-v ~/dev/cax:/cax \
+-p 8888:8888 \
+nvcr.io/nvidia/jax:24.04-py3 \
+bash -c /cax/docker/test.arc.oop.sh
 ```
 
 set up local environment on ojo
