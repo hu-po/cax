@@ -2,14 +2,14 @@
 
 ## oop
 
-get it working on ojo and oop
+clone repo
 
 ```bash
 git clone https://github.com/hu-po/cax.git
 cd cax
 ```
 
-local test on oop works fine
+test library on raw local
 
 ```bash
 conda create -n cax python=3.10
@@ -18,7 +18,7 @@ pip install -e '.[dev]'
 pytest
 ```
 
-pick a container for oop
+test base container
 
 ```bash
 docker run --gpus all -it --rm \
@@ -26,7 +26,7 @@ nvcr.io/nvidia/jax:24.04-py3 \
 bash -c "nvidia-smi && python3 -c 'import jax; print(jax.devices())'"
 ```
 
-library tests in container on oop
+run library tests in container
 
 ```bash
 docker run --gpus all -it --rm \
@@ -35,7 +35,7 @@ nvcr.io/nvidia/jax:24.04-py3 \
 bash -c /cax/examples/arc-2024/test.lib.oop.sh
 ```
 
-run arc 1d test for oop
+run arc 1d test for oop in container
 
 ```bash
 docker run --gpus all -it --rm \
@@ -49,11 +49,15 @@ bash -c /cax/examples/arc-2024/test.1d-arc.oop.sh
 
 - https://github.com/dusty-nv/jetson-containers/tree/master/packages/ml/jax
 
+test base container
+
 ```bash
 jetson-containers run \
 $(autotag jax) \
 bash -c "python3 -c 'import jax; print(jax.devices())'"
 ```
+
+run library tests
 
 ```bash
 jetson-containers run \
@@ -82,6 +86,10 @@ jetson-containers run \
 $(autotag jax) \
 bash -c "/cax/examples/arc-2024/train.arc-2024.ojo.sh"
 ```
+
+## lambda
+
+
 
 ## ideas while reading paper
 
