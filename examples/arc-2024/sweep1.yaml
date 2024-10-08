@@ -1,4 +1,4 @@
-program: python3 /cax/examples/arc-2024/train.py
+program: /cax/examples/arc-2024/train.py
 method: bayes
 metric:
   name: eval_accuracy
@@ -14,3 +14,8 @@ parameters:
     values: [64, 128, 256, 512]
   cell_dropout_rate:
     values: [0.1, 0.5, 0.8]
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}
