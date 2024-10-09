@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import argparse
 import json
 import os
@@ -14,6 +12,7 @@ from cax.core.update.residual_update import ResidualUpdate
 from flax import nnx
 from tqdm.auto import tqdm
 import wandb
+
 
 def process_example(example, task_index, ds_size):
     input_data = jnp.squeeze(jnp.array(example["input"], dtype=jnp.int32))
@@ -30,6 +29,7 @@ def process_example(example, task_index, ds_size):
     return jnp.expand_dims(
         jnp.concatenate([jnp.array([task_index], dtype=jnp.int32), input_padded, output_padded]), axis=-1
     )
+
 
 def main():
     parser = argparse.ArgumentParser(description='ARC 2024 Neural Cellular Automata')

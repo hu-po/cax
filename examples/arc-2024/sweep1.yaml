@@ -1,5 +1,5 @@
 program: /cax/examples/arc-2024/train.py
-method: bayes
+method: random
 metric:
   name: eval_accuracy
   goal: maximize
